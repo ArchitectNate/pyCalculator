@@ -66,17 +66,23 @@ def do_math(val1: float, operation: str, val2: float):
 
 
 def compute(algorithm: list) -> Union[None, float]:
-    # Do all multiplication
+    # Do operations in order
     for operation in ["**", "*", "/", "-", "+"]:
         while operation in algorithm:
+            # Get the location of the operator
             index = algorithm.index(operation)
+            
+            # Select the two numbers on either side with the operator
             operation_set = algorithm[index-1:index+2]
+            
+            # Do the calculation
             calculated_value = do_math(float(operation_set[0]), operation_set[1], float(operation_set[2]))
 
             # Now remove two of the elements and replace the last one with the new value
             del algorithm[index:index+2]
             algorithm[index-1] = calculated_value
 
+     # The final remaining item is the answer, as index 0 of a single item list
     return float(algorithm[0])
 
 
