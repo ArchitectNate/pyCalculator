@@ -1,8 +1,8 @@
 from typing import Union
 import re
 
-runningTotal: float = 0
-run: bool = True
+runningTotal = 0
+run = True
 
 
 def intro_message():
