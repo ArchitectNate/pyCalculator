@@ -27,14 +27,14 @@ def parse_command(running_total: float, command: str) -> Union[None, list]:
     # Then check that no operations or decimals are next to each other
     doubles = re.findall(r"[./*+\-]{2,}", command)
     for double in doubles:
-        if double != "**":
+        if double not in ["**-", "**", "*-", "/-", "+-", "--"]:
             return None
 
     # Now collect all operations in the order of their usage
-    operations = re.findall(r"\*\*|\*|/|\+|-", command)
+    operations = re.findall(r"\*\*-|\*-|\+-|--|/-|\*\*|\*|/|\+|-", command)
 
     # Then replace all operations with a placeholder
-    replaced_command = re.sub(r"\*\*|\*|/|\+|-", "$", command)
+    replaced_command = re.sub(r"\*\*-|\*-|\+-|--|/-|\*\*|\*|/|\+|-", "$", command)
 
     # Now split by the placeholder
     values = replaced_command.split("$")
@@ -53,6 +53,10 @@ def parse_command(running_total: float, command: str) -> Union[None, list]:
 
 
 def do_math(val1: float, operation: str, val2: float):
+    if len(operation) > 1 and operation[-1:] == "-":
+        operation = operation[:-1]
+        val2 = -1 * val2
+
     if operation == '**':
         return val1 ** val2
     elif operation == '*':
@@ -67,14 +71,14 @@ def do_math(val1: float, operation: str, val2: float):
 
 def compute(algorithm: list) -> Union[None, float]:
     # Do operations in order
-    for operation in ["**", "*", "/", "-", "+"]:
+    for operation in ["**-", "**", "*-", "*", "/-", "/", "--", "-", "+-", "+"]:
         while operation in algorithm:
             # Get the location of the operator
             index = algorithm.index(operation)
-            
+
             # Select the two numbers on either side with the operator
             operation_set = algorithm[index-1:index+2]
-            
+
             # Do the calculation
             calculated_value = do_math(float(operation_set[0]), operation_set[1], float(operation_set[2]))
 
@@ -82,7 +86,7 @@ def compute(algorithm: list) -> Union[None, float]:
             del algorithm[index:index+2]
             algorithm[index-1] = calculated_value
 
-     # The final remaining item is the answer, as index 0 of a single item list
+    # The final remaining item is the answer, as index 0 of a single item list
     return float(algorithm[0])
 
 
